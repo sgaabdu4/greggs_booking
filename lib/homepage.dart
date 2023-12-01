@@ -53,11 +53,8 @@ class _MyHomePageState extends ConsumerState<MyHomePage> {
               const SizedBox(height: 10),
               const BasketTotalWidget(),
               const SizedBox(height: 10),
-              CheckOutButtonWidget(
-                nextpage: () {
-                  Navigator.of(context).push(MaterialPageRoute(
-                      builder: (context) => const SummaryPage()));
-                },
+              const CheckOutButtonWidget(
+                nextpage: SummaryPage(),
               ),
             ]
           ],

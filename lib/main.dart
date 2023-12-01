@@ -21,6 +21,8 @@ class MyApp extends ConsumerWidget {
 
         //set themes for the app
         theme: ThemeData(
+          appBarTheme:
+              const AppBarTheme(color: Color.fromARGB(255, 241, 250, 255)),
           dialogTheme: DialogTheme(
               shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(10),
@@ -44,7 +46,7 @@ class MyApp extends ConsumerWidget {
                 RoundedRectangleBorder(borderRadius: BorderRadius.circular(5)),
           )),
         ),
-        
+
         //futureprovider that fetches the json
         home: greggsAPI.when(
           loading: () =>

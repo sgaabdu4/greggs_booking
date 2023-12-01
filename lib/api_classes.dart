@@ -1,7 +1,31 @@
-
 class GreggsAPI {
-  String? articleCode;
   String? shopCode;
+  List<FoodItems>? foodItems;
+
+  GreggsAPI({this.shopCode, this.foodItems});
+
+  GreggsAPI.fromJson(Map<String, dynamic> json) {
+    shopCode = json['shopCode'];
+    if (json['foodItems'] != null) {
+      foodItems = <FoodItems>[];
+      json['foodItems'].forEach((v) {
+        foodItems!.add(FoodItems.fromJson(v));
+      });
+    }
+  }
+
+  Map<String, dynamic> toJson() {
+    final Map<String, dynamic> data = <String, dynamic>{};
+    data['shopCode'] = shopCode;
+    if (foodItems != null) {
+      data['foodItems'] = foodItems!.map((v) => v.toJson()).toList();
+    }
+    return data;
+  }
+}
+
+class FoodItems {
+  String? articleCode;
   String? availableFrom;
   String? availableUntil;
   double? eatOutPrice;
@@ -13,9 +37,8 @@ class GreggsAPI {
   String? imageUri;
   String? thumbnailUri;
 
-  GreggsAPI(
+  FoodItems(
       {this.articleCode,
-      this.shopCode,
       this.availableFrom,
       this.availableUntil,
       this.eatOutPrice,
@@ -27,9 +50,8 @@ class GreggsAPI {
       this.imageUri,
       this.thumbnailUri});
 
-  GreggsAPI.fromJson(Map<String, dynamic> json) {
+  FoodItems.fromJson(Map<String, dynamic> json) {
     articleCode = json['articleCode'];
-    shopCode = json['shopCode'];
     availableFrom = json['availableFrom'];
     availableUntil = json['availableUntil'];
     eatOutPrice = json['eatOutPrice'];
@@ -45,7 +67,6 @@ class GreggsAPI {
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = <String, dynamic>{};
     data['articleCode'] = articleCode;
-    data['shopCode'] = shopCode;
     data['availableFrom'] = availableFrom;
     data['availableUntil'] = availableUntil;
     data['eatOutPrice'] = eatOutPrice;

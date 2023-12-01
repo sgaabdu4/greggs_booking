@@ -14,7 +14,7 @@ class SummaryPage extends ConsumerStatefulWidget {
 class _SummaryPageState extends ConsumerState<SummaryPage> {
   @override
   Widget build(BuildContext context) {
-    final aggregatedItems = ref.watch(aggregatedItemsProvider);
+    final finalBasketItems = ref.watch(finalBasketItemProvider);
 
     return Scaffold(
         appBar: AppBar(
@@ -77,8 +77,8 @@ class _SummaryPageState extends ConsumerState<SummaryPage> {
                     child: SingleChildScrollView(
                         child: Column(
                   children: [
-                    for (AggregatedItem foodItem in aggregatedItems)
-                      FoodItemSummaryWidget(foodItem: foodItem),
+                    for (FinalBasketItem finalBasketItem in finalBasketItems)
+                      FoodItemSummaryWidget(finalBasketItem: finalBasketItem),
                   ],
                 ))),
                 const SizedBox(
@@ -99,10 +99,10 @@ class _SummaryPageState extends ConsumerState<SummaryPage> {
 class FoodItemSummaryWidget extends ConsumerWidget {
   const FoodItemSummaryWidget({
     super.key,
-    required this.foodItem,
+    required this.finalBasketItem,
   });
 
-  final AggregatedItem foodItem;
+  final FinalBasketItem finalBasketItem;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -122,7 +122,7 @@ class FoodItemSummaryWidget extends ConsumerWidget {
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
                   Image.network(
-                    '${foodItem.foodItem.thumbnailUri}',
+                    '${finalBasketItem.foodItem.thumbnailUri}',
                     width: 100,
                   ),
                   Column(
@@ -134,7 +134,7 @@ class FoodItemSummaryWidget extends ConsumerWidget {
                         child: FittedBox(
                           fit: BoxFit.scaleDown,
                           child: Text(
-                            '${foodItem.foodItem.articleName}',
+                            '${finalBasketItem.foodItem.articleName}',
                             textScaler: const TextScaler.linear(1.5),
                             style: const TextStyle(fontWeight: FontWeight.bold),
                           ),
@@ -142,7 +142,7 @@ class FoodItemSummaryWidget extends ConsumerWidget {
                       ),
                       const SizedBox(height: 10),
                       Text(
-                        'Quantity: ${foodItem.quantity}',
+                        'Quantity: ${finalBasketItem.quantity}',
                         // style: TextStyle(fontWeight: FontWeight.bold),
                       ),
                     ],
@@ -159,7 +159,7 @@ class FoodItemSummaryWidget extends ConsumerWidget {
                         context: context,
                         builder: (BuildContext context) =>
                             FoodItemInformationWidget(
-                              foodItem: foodItem.foodItem,
+                              foodItem: finalBasketItem.foodItem,
                             )),
                     icon: const Icon(
                       Icons.info,

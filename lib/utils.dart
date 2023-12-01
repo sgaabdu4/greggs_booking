@@ -13,10 +13,10 @@ class PaymentButtonWidget extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final aggregatedItems = ref.watch(aggregatedItemsProvider);
+    final finalBasketItems = ref.watch(finalBasketItemProvider);
     return InkWell(
       onTap: () {
-        if (aggregatedItems.isNotEmpty) {
+        if (finalBasketItems.isNotEmpty) {
           Navigator.of(context).push(
               MaterialPageRoute(builder: (context) => const SummaryPage()));
         } else {

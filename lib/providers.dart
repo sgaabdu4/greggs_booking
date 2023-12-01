@@ -11,35 +11,34 @@ final greggNetworkImageProvider = Provider<Image>((ref) => Image.network(
       width: 40,
     ));
 
-final greggsAPIProvider = FutureProvider<GreggsAPI>((ref) async {
-  return fetchGreggsAPI();
-});
+final greggsAPIProvider =
+    FutureProvider<GreggsAPI>((ref) async => fetchGreggsAPI());
 
 final itemQuantityProvider =
     StateProvider.family<int, String>((ref, articleCode) => 0);
 final userChoiceProvider = StateProvider<bool?>(
     (ref) => null); // true for Eat In, false for Eat Out, null for no choice
 
-final aggregatedItemsProvider = Provider<List<AggregatedItem>>((ref) {
+final finalBasketItemProvider = Provider<List<FinalBasketItem>>((ref) {
   final foodItems = ref.watch(greggsAPIProvider).value?.foodItems ?? [];
   return foodItems
       .map((item) {
         final quantity =
             ref.watch(itemQuantityProvider(item.articleCode ?? ''));
-        return AggregatedItem(
+        return FinalBasketItem(
           foodItem: item,
           quantity: quantity,
         );
       })
-      .where((aggregatedItem) => aggregatedItem.quantity > 0)
+      .where((finalBasketItem) => finalBasketItem.quantity > 0)
       .toList();
 });
 
-class AggregatedItem {
+class FinalBasketItem {
   final FoodItems foodItem;
   final int quantity;
 
-  AggregatedItem({required this.foodItem, required this.quantity});
+  FinalBasketItem({required this.foodItem, required this.quantity});
 }
 
 Future<GreggsAPI> fetchGreggsAPI() async {

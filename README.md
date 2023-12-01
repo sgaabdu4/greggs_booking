@@ -36,8 +36,7 @@ The Greggs Booking App is a Flutter-based mobile application designed for users 
 After launching the app, follow these steps:
 
 1. **Choose Eat In or Eat Out**: Select your dining preference.
-2. **Select a Food Item**: Tap on a food item to add it to your basket.
-3. **Adjust Quantity**: Use the '+' and '-' buttons to adjust the quantity of each item.
+2. **Adjust Quantity**: Use the '+' and '-' buttons to adjust the quantity of each item you want in your basket.
 4. **Food Item Info**: Click on the 'i' to get more information about the item.
 5. **Review Your Basket**: Tap on the 'Checkout' button to review your selections.
 6. **Proceed to Checkout**: Confirm your order and proceed to checkout.

@@ -3,14 +3,16 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'package:greggs_booking/api_classes.dart';
+import 'package:greggs_booking/coming_soon_page.dart';
 import 'package:greggs_booking/providers.dart';
 
 class CheckOutButtonWidget extends ConsumerWidget {
-  const CheckOutButtonWidget({super.key, 
+  const CheckOutButtonWidget({
+    super.key,
     required this.nextpage,
   });
 
-  final void Function() nextpage;
+  final Widget? nextpage;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -18,7 +20,8 @@ class CheckOutButtonWidget extends ConsumerWidget {
     return InkWell(
       onTap: () {
         if (finalBasketItems.isNotEmpty) {
-          nextpage;
+          Navigator.of(context).push(MaterialPageRoute(
+              builder: (context) => nextpage ?? const ComingSoon()));
         } else {
           showDialog<String>(
               context: context,

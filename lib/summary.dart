@@ -1,16 +1,21 @@
+// ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:greggs_booking/providers.dart';
 import 'package:greggs_booking/utils.dart';
 
-class SummaryPage extends StatefulWidget {
+class SummaryPage extends ConsumerStatefulWidget {
   const SummaryPage({super.key});
 
   @override
-  State<SummaryPage> createState() => _SummaryPageState();
+  ConsumerState<SummaryPage> createState() => _SummaryPageState();
 }
 
-class _SummaryPageState extends State<SummaryPage> {
+class _SummaryPageState extends ConsumerState<SummaryPage> {
   @override
   Widget build(BuildContext context) {
+    final aggregatedItems = ref.watch(aggregatedItemsProvider);
+
     return Scaffold(
         appBar: AppBar(
           iconTheme: const IconThemeData(
@@ -65,65 +70,17 @@ class _SummaryPageState extends State<SummaryPage> {
                               color: Colors.black, fontWeight: FontWeight.bold),
                         ))),
                 const SizedBox(height: 10),
-                Stack(
+                Expanded(
+                    child: SingleChildScrollView(
+                        child: Column(
                   children: [
-                    Container(
-                      height: 120,
-                      padding: const EdgeInsets.fromLTRB(20, 10, 20, 10),
-                      width: double.infinity,
-                      decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(10),
-                          color: Colors.amber),
-                      child: Center(
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          children: [
-                            Image.network(
-                              'https://articles.greggs.co.uk/images/1000446-thumb.png?1623244287450',
-                            ),
-                            const Column(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              crossAxisAlignment: CrossAxisAlignment.center,
-                              children: [
-                                Text(
-                                  'Sausage Roll',
-                                  textScaler: TextScaler.linear(1.5),
-                                  style: TextStyle(fontWeight: FontWeight.bold),
-                                ),
-                                Text(
-                                  '£1.05 per piece',
-                                  textScaler: TextScaler.linear(0.75),
-                                  // style: TextStyle(fontWeight: FontWeight.bold),
-                                ),
-                                SizedBox(height: 10),
-                                Text(
-                                  'Quantity: 5',
-                                  textScaler: TextScaler.linear(1.2),
-                                  // style: TextStyle(fontWeight: FontWeight.bold),
-                                ),
-                              ],
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
-                    Positioned.fill(
-                      child: Align(
-                          alignment: Alignment.bottomLeft,
-                          child: IconButton(
-                              onPressed: () => showDialog<String>(
-                                  context: context,
-                                  builder: (BuildContext context) =>
-                                      const FoodItemInformationWidget()),
-                              icon: const Icon(
-                                Icons.info,
-                                color: Colors.white,
-                              ))),
-                    )
+                    for (AggregatedItem foodItem in aggregatedItems)
+                      FoodItemSummaryWidget(foodItem: foodItem),
                   ],
+                ))),
+                const SizedBox(
+                  height: 10,
                 ),
-                const Spacer(),
                 const BasketTotalWidget(),
                 const SizedBox(
                   height: 10,
@@ -133,6 +90,82 @@ class _SummaryPageState extends State<SummaryPage> {
             ),
           ),
         ));
+  }
+}
+
+class FoodItemSummaryWidget extends ConsumerWidget {
+  const FoodItemSummaryWidget({
+    super.key,
+    required this.foodItem,
+  });
+
+  final AggregatedItem foodItem;
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(0, 10, 0, 10),
+      child: Stack(
+        children: [
+          Container(
+            height: 120,
+            padding: const EdgeInsets.fromLTRB(20, 10, 20, 10),
+            width: double.infinity,
+            decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(10), color: Colors.amber),
+            child: Center(
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  Image.network(
+                    '${foodItem.foodItem.thumbnailUri}',
+                    width: 100,
+                  ),
+                  Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      SizedBox(
+                        width: 190,
+                        child: FittedBox(
+                          fit: BoxFit.scaleDown,
+                          child: Text(
+                            '${foodItem.foodItem.articleName}',
+                            textScaler: const TextScaler.linear(1.5),
+                            style: const TextStyle(fontWeight: FontWeight.bold),
+                          ),
+                        ),
+                      ),
+                      const SizedBox(height: 10),
+                      Text(
+                        'Quantity: ${foodItem.quantity}',
+                        // style: TextStyle(fontWeight: FontWeight.bold),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+            ),
+          ),
+          Positioned.fill(
+            child: Align(
+                alignment: Alignment.bottomLeft,
+                child: IconButton(
+                    onPressed: () => showDialog<String>(
+                        context: context,
+                        builder: (BuildContext context) =>
+                            FoodItemInformationWidget(
+                              foodItem: foodItem.foodItem,
+                            )),
+                    icon: const Icon(
+                      Icons.info,
+                      color: Colors.white,
+                    ))),
+          )
+        ],
+      ),
+    );
   }
 }
 

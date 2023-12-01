@@ -17,14 +17,13 @@ The Greggs Booking App is a Flutter-based mobile application designed for users 
 
 ### Prerequisites
 
-- Flutter (latest version recommended)
-- Dart SDK
+- Flutter SDK (latest version recommended)
 - An IDE (e.g., VS Code, Android Studio)
 
 ### Installation
 
 1. **Clone the Repository**:
-   ```git clone https://github.com/yourusername/greggs-booking.git```
+   ```git clone https://github.com/sgaabdu4/greggs_booking```
 2. **Navigate to the project directory**:
    ```cd greggs-booking```
 3. **Get Flutter packages**:
@@ -36,10 +35,10 @@ The Greggs Booking App is a Flutter-based mobile application designed for users 
 
 After launching the app, follow these steps:
 
-1. **Select a Food Item**: Tap on a food item to add it to your basket.
-2. **Adjust Quantity**: Use the '+' and '-' buttons to adjust the quantity of each item.
-3. **Choose Eat In or Eat Out**: Select your dining preference.
-4. **Review Your Basket**: Tap on the 'Basket' icon to review your selections.
+1. **Choose Eat In or Eat Out**: Select your dining preference.
+2. **Select a Food Item**: Tap on a food item to add it to your basket.
+3. **Adjust Quantity**: Use the '+' and '-' buttons to adjust the quantity of each item.
+4. **Review Your Basket**: Tap on the 'Checkout' button to review your selections.
 5. **Proceed to Checkout**: Confirm your order and proceed to checkout.
 
 ## Built With
@@ -48,15 +47,7 @@ After launching the app, follow these steps:
 - [Riverpod](https://riverpod.dev/) - State management
 - [Google Fonts](https://pub.dev/packages/google_fonts) - Font styling
 
-## Contributing
-
-Contributions to the Greggs Booking App are welcome. Please read `CONTRIBUTING.md` for details on our code of conduct and the process for submitting pull requests.
-
-## License
-
-This project is licensed under the MIT License - see the `LICENSE.md` file for details.
-
 ## Acknowledgments
 
-- Greggs API for providing the data.
+- Greggs for providing the data.
 - Flutter community for support and resources.

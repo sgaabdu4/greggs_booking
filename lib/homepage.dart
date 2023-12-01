@@ -15,12 +15,13 @@ class MyHomePage extends ConsumerStatefulWidget {
 class _MyHomePageState extends ConsumerState<MyHomePage> {
   @override
   Widget build(BuildContext context) {
+    //get food items from the json
     List<FoodItems> foodItems =
         ref.watch(greggsAPIProvider).value?.foodItems ?? [];
+    //check if isEatIn (true) or isEatOut (false) or none is selected
     bool? isEatIn = ref.watch(userChoiceProvider);
 
     return Scaffold(
-      // appBar: AppBar(),
       body: SafeArea(
           child: Padding(
         padding: const EdgeInsets.all(20.0),

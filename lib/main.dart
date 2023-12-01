@@ -18,6 +18,8 @@ class MyApp extends ConsumerWidget {
     AsyncValue<GreggsAPI> greggsAPI = ref.watch(greggsAPIProvider);
     return MaterialApp(
         title: 'Flutter Demo',
+
+        //set themes for the app
         theme: ThemeData(
           dialogTheme: DialogTheme(
               shape: RoundedRectangleBorder(
@@ -41,8 +43,9 @@ class MyApp extends ConsumerWidget {
             shape:
                 RoundedRectangleBorder(borderRadius: BorderRadius.circular(5)),
           )),
-          useMaterial3: true,
         ),
+        
+        //futureprovider that fetches the json
         home: greggsAPI.when(
           loading: () =>
               const Scaffold(body: Center(child: CircularProgressIndicator())),

@@ -1,36 +1,58 @@
+// ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+
+import 'package:greggs_booking/api_classes.dart';
+import 'package:greggs_booking/providers.dart';
 import 'package:greggs_booking/utils.dart';
 
-class MyHomePage extends StatefulWidget {
+class MyHomePage extends ConsumerStatefulWidget {
   const MyHomePage({super.key});
   @override
-  State<MyHomePage> createState() => _MyHomePageState();
+  ConsumerState<MyHomePage> createState() => _MyHomePageState();
 }
 
-class _MyHomePageState extends State<MyHomePage> {
+class _MyHomePageState extends ConsumerState<MyHomePage> {
   @override
   Widget build(BuildContext context) {
+    List<FoodItems> foodItems =
+        ref.watch(greggsAPIProvider).value?.foodItems ?? [];
+    bool? isEatIn = ref.watch(userChoiceProvider);
+
     return Scaffold(
       // appBar: AppBar(),
       body: SafeArea(
           child: Padding(
-        padding: EdgeInsets.all(20.0),
+        padding: const EdgeInsets.all(20.0),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.start,
           children: [
-            WelcomeHeading(),
-            SizedBox(height: 20),
-            CurrentLocationWidget(),
-            SizedBox(height: 20),
-            EatInEatOutQuestion(),
-            SizedBox(height: 20),
-            EatInEatOutWidget(),
-            SizedBox(height: 20),
-            FoodItem(),
-            Spacer(),
-            BasketTotalWidget(),
-            SizedBox(height: 10),
-            PaymentButtonWidget(),
+            const WelcomeHeading(),
+            const SizedBox(height: 20),
+            const CurrentLocationWidget(),
+            const SizedBox(height: 20),
+            if (isEatIn == null) ...[
+              const EatInEatOutQuestion(),
+              const SizedBox(height: 20),
+            ],
+            const EatInEatOutWidget(),
+            if (isEatIn != null) ...[
+              const SizedBox(height: 20),
+              Expanded(
+                child: SingleChildScrollView(
+                  child: Column(
+                    children: [
+                      for (FoodItems foodItem in foodItems)
+                        FoodItemWidget(foodItem: foodItem),
+                    ],
+                  ),
+                ),
+              ),
+              const SizedBox(height: 10),
+              const BasketTotalWidget(),
+              const SizedBox(height: 10),
+              const PaymentButtonWidget(),
+            ]
           ],
         ),
       )),
@@ -38,112 +60,142 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 }
 
-class FoodItem extends StatelessWidget {
-  const FoodItem({
+class FoodItemWidget extends ConsumerWidget {
+  const FoodItemWidget({
     super.key,
+    required this.foodItem,
   });
 
+  final FoodItems foodItem;
+
   @override
-  Widget build(BuildContext context) {
-    return Stack(
-      children: [
-        Container(
-          height: 120,
-          padding: const EdgeInsets.fromLTRB(20, 10, 20, 10),
-          width: double.infinity,
-          decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(10),
-              color: Theme.of(context).primaryColor),
-          child: Center(
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                Image.network(
-                  'https://articles.greggs.co.uk/images/1000446-thumb.png?1623244287450',
-                ),
-                Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                    const Text(
-                      'Sausage Roll',
-                      style: TextStyle(color: Colors.white),
-                      textScaler: TextScaler.linear(1.5),
-                    ),
-                    const Text(
-                      '£1.05 per piece',
-                      style: TextStyle(color: Colors.white),
-                    ),
-                    const SizedBox(height: 10),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      children: [
-                        InkWell(
-                          onTap: () {},
-                          child: Container(
-                            height: 20,
-                            width: 20,
-                            decoration: const BoxDecoration(
-                                color: Colors.amber,
-                                borderRadius: BorderRadius.only(
-                                    topLeft: Radius.circular(10),
-                                    bottomLeft: Radius.circular(10))),
-                            child: const Icon(
-                              Icons.remove,
-                              size: 15,
-                            ),
+  Widget build(BuildContext context, WidgetRef ref) {
+    final quantity =
+        ref.watch(itemQuantityProvider(foodItem.articleCode ?? ''));
+    bool? isEatIn = ref.watch(userChoiceProvider);
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(0, 10, 0, 10),
+      child: Stack(
+        children: [
+          Container(
+            height: 120,
+            padding: const EdgeInsets.fromLTRB(20, 10, 20, 10),
+            width: double.infinity,
+            decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(10),
+                color: Theme.of(context).primaryColor),
+            child: Center(
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  Image.network(
+                    foodItem.thumbnailUri ?? '',
+                    width: 100,
+                  ),
+                  Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      SizedBox(
+                        width: 190,
+                        child: FittedBox(
+                          fit: BoxFit.scaleDown,
+                          child: Text(
+                            foodItem.articleName ?? '',
+                            style: const TextStyle(color: Colors.white),
+                            textScaler: const TextScaler.linear(1.5),
                           ),
                         ),
-                        const SizedBox(width: 5),
-                        Container(
-                          height: 20,
-                          width: 20,
-                          color: Colors.amber,
-                          child: const Text(
-                            '0',
-                            textAlign: TextAlign.center,
-                          ),
-                        ),
-                        const SizedBox(width: 5),
-                        InkWell(
-                          onTap: () {},
-                          child: Container(
+                      ),
+                      Text(
+                        '£${(isEatIn == true) ? foodItem.eatInPrice : foodItem.eatOutPrice ?? ''} per piece',
+                        style: const TextStyle(color: Colors.white),
+                      ),
+                      const SizedBox(height: 10),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                          InkWell(
+                            onTap: () {
+                              if (quantity > 0) {
+                                ref
+                                    .read(itemQuantityProvider(
+                                            foodItem.articleCode ?? '')
+                                        .notifier)
+                                    .state--;
+                              }
+                            },
+                            child: Container(
                               height: 20,
                               width: 20,
                               decoration: const BoxDecoration(
                                   color: Colors.amber,
                                   borderRadius: BorderRadius.only(
-                                      topRight: Radius.circular(10),
-                                      bottomRight: Radius.circular(10))),
+                                      topLeft: Radius.circular(10),
+                                      bottomLeft: Radius.circular(10))),
                               child: const Icon(
-                                Icons.add,
+                                Icons.remove,
                                 size: 15,
-                              )),
-                        ),
-                      ],
-                    )
-                  ],
-                ),
-              ],
+                              ),
+                            ),
+                          ),
+                          const SizedBox(width: 5),
+                          Container(
+                            height: 20,
+                            width: 20,
+                            color: Colors.amber,
+                            child: Text(
+                              '$quantity',
+                              textAlign: TextAlign.center,
+                            ),
+                          ),
+                          const SizedBox(width: 5),
+                          InkWell(
+                            onTap: () {
+                              ref
+                                  .read(itemQuantityProvider(
+                                          foodItem.articleCode ?? '')
+                                      .notifier)
+                                  .state++;
+                            },
+                            child: Container(
+                                height: 20,
+                                width: 20,
+                                decoration: const BoxDecoration(
+                                    color: Colors.amber,
+                                    borderRadius: BorderRadius.only(
+                                        topRight: Radius.circular(10),
+                                        bottomRight: Radius.circular(10))),
+                                child: const Icon(
+                                  Icons.add,
+                                  size: 15,
+                                )),
+                          ),
+                        ],
+                      )
+                    ],
+                  ),
+                ],
+              ),
             ),
           ),
-        ),
-        Positioned.fill(
-          child: Align(
-              alignment: Alignment.bottomLeft,
-              child: IconButton(
-                  onPressed: () => showDialog<String>(
-                      context: context,
-                      builder: (BuildContext context) =>
-                          const FoodItemInformationWidget()),
-                  icon: const Icon(
-                    Icons.info,
-                    color: Colors.white,
-                  ))),
-        )
-      ],
+          Positioned.fill(
+            child: Align(
+                alignment: Alignment.bottomLeft,
+                child: IconButton(
+                    onPressed: () => showDialog<String>(
+                        context: context,
+                        builder: (BuildContext context) =>
+                            FoodItemInformationWidget(foodItem: foodItem)),
+                    icon: const Icon(
+                      Icons.info,
+                      color: Colors.white,
+                    ))),
+          )
+        ],
+      ),
     );
   }
 }
@@ -165,35 +217,44 @@ class EatInEatOutQuestion extends StatelessWidget {
   }
 }
 
-class EatInEatOutWidget extends StatelessWidget {
+class EatInEatOutWidget extends ConsumerWidget {
   const EatInEatOutWidget({
     super.key,
   });
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    bool? isEatIn = ref.watch(userChoiceProvider);
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceAround,
       children: [
-        Expanded(
-          child: OutlinedButton(
-              onPressed: () {},
-              child: const Text(
-                'Eat In',
-                style: TextStyle(fontWeight: FontWeight.bold),
-              )),
-        ),
+        (isEatIn != true)
+            ? Expanded(
+                child: OutlinedButton(
+                    onPressed: () {
+                      ref.read(userChoiceProvider.notifier).state = true;
+                    },
+                    child: const Text(
+                      'Eat In',
+                      style: TextStyle(fontWeight: FontWeight.bold),
+                    )),
+              )
+            : const Expanded(
+                child: FilledButton(onPressed: null, child: Text('Eat In'))),
         const SizedBox(width: 10),
-        Expanded(
-          child: OutlinedButton(
-              onPressed: () {},
-              child: const Text(
-                'Eat Out',
-                style: TextStyle(fontWeight: FontWeight.bold),
-              )),
-        ),
-        // const Expanded(
-        //     child: FilledButton(onPressed: null, child: Text('Eat Out'))),
+        (isEatIn != false)
+            ? Expanded(
+                child: OutlinedButton(
+                    onPressed: () {
+                      ref.read(userChoiceProvider.notifier).state = false;
+                    },
+                    child: const Text(
+                      'Eat Out',
+                      style: TextStyle(fontWeight: FontWeight.bold),
+                    )),
+              )
+            : const Expanded(
+                child: FilledButton(onPressed: null, child: Text('Eat Out'))),
       ],
     );
   }
@@ -213,10 +274,14 @@ class CurrentLocationWidget extends StatelessWidget {
           color: Theme.of(context).primaryColor,
           borderRadius: BorderRadius.circular(10)),
       padding: const EdgeInsets.fromLTRB(15, 10, 10, 15),
-      child: const Text(
-        'Current Location: 1234',
-        style: TextStyle(fontWeight: FontWeight.bold, color: Colors.white),
-      ),
+      child: Consumer(builder: (context, ref, child) {
+        String location = ref.watch(greggsAPIProvider).value?.shopCode ?? '';
+        return Text(
+          'Current Location: $location',
+          style:
+              const TextStyle(fontWeight: FontWeight.bold, color: Colors.white),
+        );
+      }),
     );
   }
 }

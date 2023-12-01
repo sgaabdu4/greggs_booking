@@ -1,8 +1,15 @@
 import 'dart:convert';
 
+import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:greggs_booking/api_classes.dart';
 import 'package:http/http.dart' as http;
+
+final greggNetworkImageProvider = Provider<Image>((ref) => Image.network(
+      "https://hammersmithbroadway.co.uk/wp-content/uploads/2022/10/Greggs-logo.png",
+      height: 40,
+      width: 40,
+    ));
 
 final greggsAPIProvider = FutureProvider<GreggsAPI>((ref) async {
   return fetchGreggsAPI();

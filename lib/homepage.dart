@@ -295,11 +295,10 @@ class WelcomeHeading extends StatelessWidget {
       children: [
         ClipRRect(
           borderRadius: BorderRadius.circular(10),
-          child: Image.network(
-            'https://hammersmithbroadway.co.uk/wp-content/uploads/2022/10/Greggs-logo.png',
-            height: 75,
-            width: 75,
-          ),
+          child: Consumer(builder: (context, ref, _) {
+            final greggNetworkImage = ref.watch(greggNetworkImageProvider);
+            return greggNetworkImage;
+          }),
         ),
         const Spacer(),
         const Text(

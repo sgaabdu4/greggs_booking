@@ -24,10 +24,13 @@ class _SummaryPageState extends ConsumerState<SummaryPage> {
           actions: [
             Padding(
               padding: const EdgeInsets.only(right: 8.0),
-              child: Image.network(
-                'https://hammersmithbroadway.co.uk/wp-content/uploads/2022/10/Greggs-logo.png',
-                height: 40,
-                width: 40,
+              child: ClipRRect(
+                borderRadius: BorderRadius.circular(10),
+                child: Consumer(builder: (context, ref, _) {
+                  final greggNetworkImage =
+                      ref.watch(greggNetworkImageProvider);
+                  return greggNetworkImage;
+                }),
               ),
             )
           ],

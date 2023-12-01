@@ -95,10 +95,9 @@ class FoodItemWidget extends ConsumerWidget {
                   ),
                   Column(
                     mainAxisAlignment: MainAxisAlignment.center,
-                    crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
                       SizedBox(
-                        width: 190,
+                        width: 180,
                         child: FittedBox(
                           fit: BoxFit.scaleDown,
                           child: Text(
@@ -114,8 +113,6 @@ class FoodItemWidget extends ConsumerWidget {
                       ),
                       const SizedBox(height: 10),
                       Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        crossAxisAlignment: CrossAxisAlignment.center,
                         children: [
                           InkWell(
                             onTap: () {

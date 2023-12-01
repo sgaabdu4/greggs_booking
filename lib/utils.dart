@@ -17,36 +17,38 @@ class CheckOutButtonWidget extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final finalBasketItems = ref.watch(finalBasketItemProvider);
-    return InkWell(
-      onTap: () {
-        if (finalBasketItems.isNotEmpty) {
-          Navigator.of(context).push(MaterialPageRoute(
-              builder: (context) => nextpage ?? const ComingSoon()));
-        } else {
-          showDialog<String>(
-              context: context,
-              builder: (BuildContext context) => const AlertDialog(
-                    title: Text('Add Basket'),
-                    content: Text('Please add something into the basket.'),
-                  ));
-        }
-      },
-      child: Container(
-          height: 40,
-          width: double.infinity,
-          margin: const EdgeInsets.only(left: 30, right: 30),
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(10),
-            color: Colors.black,
-          ),
-          child: const Center(
-            child: Text(
-              'Checkout',
-              style: TextStyle(
-                color: Colors.white,
-              ),
+    return Padding(
+      padding: const EdgeInsets.only(left: 30, right: 30),
+      child: InkWell(
+        onTap: () {
+          if (finalBasketItems.isNotEmpty) {
+            Navigator.of(context).push(MaterialPageRoute(
+                builder: (context) => nextpage ?? const ComingSoon()));
+          } else {
+            showDialog<String>(
+                context: context,
+                builder: (BuildContext context) => const AlertDialog(
+                      title: Text('Add Basket'),
+                      content: Text('Please add something into the basket.'),
+                    ));
+          }
+        },
+        child: Container(
+            height: 40,
+            width: double.infinity,
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(10),
+              color: Colors.black,
             ),
-          )),
+            child: const Center(
+              child: Text(
+                'Checkout',
+                style: TextStyle(
+                  color: Colors.white,
+                ),
+              ),
+            )),
+      ),
     );
   }
 }

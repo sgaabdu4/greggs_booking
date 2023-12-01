@@ -15,6 +15,7 @@ class _SummaryPageState extends ConsumerState<SummaryPage> {
   @override
   Widget build(BuildContext context) {
     final finalBasketItems = ref.watch(finalBasketItemProvider);
+    bool? isEatIn = ref.watch(userChoiceProvider);
 
     return Scaffold(
         appBar: AppBar(
@@ -63,13 +64,13 @@ class _SummaryPageState extends ConsumerState<SummaryPage> {
                   ),
                 ),
                 const SizedBox(height: 10),
-                const SizedBox(
+                SizedBox(
                     width: double.maxFinite,
                     child: FilledButton(
                         onPressed: null,
                         child: Text(
-                          'Eat Out',
-                          style: TextStyle(
+                          (isEatIn == true) ? 'Eat In' : 'Eat Out',
+                          style: const TextStyle(
                               color: Colors.black, fontWeight: FontWeight.bold),
                         ))),
                 const SizedBox(height: 10),

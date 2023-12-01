@@ -1,4 +1,9 @@
+// ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+
+import 'package:greggs_booking/api_classes.dart';
+import 'package:greggs_booking/providers.dart';
 import 'package:greggs_booking/summary.dart';
 
 class PaymentButtonWidget extends StatelessWidget {
@@ -33,13 +38,22 @@ class PaymentButtonWidget extends StatelessWidget {
   }
 }
 
-class BasketTotalWidget extends StatelessWidget {
+class BasketTotalWidget extends ConsumerWidget {
   const BasketTotalWidget({
     super.key,
   });
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final userChoice = ref.watch(userChoiceProvider);
+    final foodItems = ref.watch(greggsAPIProvider).value?.foodItems ?? [];
+    double total = 0.0;
+
+    for (var item in foodItems) {
+      final quantity = ref.watch(itemQuantityProvider(item.articleCode ?? ''));
+      final price = userChoice == true ? item.eatInPrice : item.eatOutPrice;
+      total += (price ?? 0) * quantity;
+    }
     return Container(
       height: 40,
       padding: const EdgeInsets.fromLTRB(20, 0, 20, 0),
@@ -48,26 +62,26 @@ class BasketTotalWidget extends StatelessWidget {
       decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(10),
           color: const Color.fromARGB(255, 161, 30, 25)),
-      child: const Row(
+      child: Row(
         children: [
-          Icon(
+          const Icon(
             Icons.shopping_cart,
             size: 20,
             color: Colors.white,
           ),
-          SizedBox(
+          const SizedBox(
             width: 10,
           ),
-          Text(
+          const Text(
             'Basket Total:',
             style: TextStyle(
               color: Colors.white,
             ),
           ),
-          Spacer(),
+          const Spacer(),
           Text(
-            '£5.06',
-            style: TextStyle(
+            '£${total.toStringAsFixed(2)}',
+            style: const TextStyle(
               color: Colors.white,
             ),
           )
@@ -79,8 +93,11 @@ class BasketTotalWidget extends StatelessWidget {
 
 class FoodItemInformationWidget extends StatelessWidget {
   const FoodItemInformationWidget({
-    super.key,
-  });
+    Key? key,
+    required this.foodItem,
+  }) : super(key: key);
+
+  final FoodItems foodItem;
 
   @override
   Widget build(BuildContext context) {
@@ -96,12 +113,12 @@ class FoodItemInformationWidget extends StatelessWidget {
             children: [
               Stack(
                 children: [
-                  const Align(
+                  Align(
                       alignment: Alignment.topCenter,
                       child: Padding(
-                        padding: EdgeInsets.only(top: 15.0),
+                        padding: const EdgeInsets.only(top: 15.0),
                         child: Text(
-                          'Sausage Roll',
+                          '${foodItem.articleName}',
                         ),
                       )),
                   Align(
@@ -122,8 +139,7 @@ class FoodItemInformationWidget extends StatelessWidget {
                 child: SingleChildScrollView(
                   child: Column(
                     children: <Widget>[
-                      Image.network(
-                          'https://articles.greggs.co.uk/images/1000446.png?1623244287449'),
+                      Image.network('${foodItem.imageUri}'),
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
@@ -131,39 +147,8 @@ class FoodItemInformationWidget extends StatelessWidget {
                             'Availability',
                             textScaler: TextScaler.linear(0.8),
                           ),
-                          Container(
-                            padding: const EdgeInsets.all(10),
-                            decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(10),
-                              color: Colors.blue,
-                            ),
-                            child: const Text(
-                              'Breakfast',
-                              textScaler: TextScaler.linear(0.8),
-                            ),
-                          ),
-                          Container(
-                            padding: const EdgeInsets.all(10),
-                            decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(10),
-                              color: Colors.blue,
-                            ),
-                            child: const Text(
-                              'Lunch',
-                              textScaler: TextScaler.linear(0.8),
-                            ),
-                          ),
-                          Container(
-                            padding: const EdgeInsets.all(10),
-                            decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(10),
-                              color: Colors.blue,
-                            ),
-                            child: const Text(
-                              'Dinner',
-                              textScaler: TextScaler.linear(0.8),
-                            ),
-                          ),
+                          for (String meal in foodItem.dayParts ?? [])
+                            MealWidget(meal: meal),
                         ],
                       ),
                       const SizedBox(height: 20),
@@ -172,17 +157,17 @@ class FoodItemInformationWidget extends StatelessWidget {
                         decoration: BoxDecoration(
                             borderRadius: BorderRadius.circular(10),
                             border: Border.all(color: Colors.white)),
-                        child: const Column(
+                        child: Column(
                           mainAxisAlignment: MainAxisAlignment.start,
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            Text(
+                            const Text(
                               'About Us',
                             ),
-                            SizedBox(height: 15),
+                            const SizedBox(height: 15),
                             Text(
-                              "The Nation’s favourite Sausage Roll.\n\nMuch like Elvis was hailed the King of Rock, many have appointed Greggs as the (unofficial) King of Sausage Rolls.\n\nFreshly baked in our shops throughout the day, this British classic is made from seasoned sausage meat wrapped in layers of crisp, golden puff pastry, as well as a large dollop of TLC. It’s fair to say, we’re proper proud of them.\n\nAnd that’s it. No clever twist. No secret ingredient. It’s how you like them, so that’s how we make them.",
-                              textScaler: TextScaler.linear(0.8),
+                              '${foodItem.customerDescription}',
+                              textScaler: const TextScaler.linear(0.8),
                             ),
                           ],
                         ),
@@ -194,6 +179,30 @@ class FoodItemInformationWidget extends StatelessWidget {
             ],
           ),
         ),
+      ),
+    );
+  }
+}
+
+class MealWidget extends StatelessWidget {
+  const MealWidget({
+    Key? key,
+    required this.meal,
+  }) : super(key: key);
+
+  final String meal;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.all(10),
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(10),
+        color: Colors.blue,
+      ),
+      child: Text(
+        meal,
+        textScaler: const TextScaler.linear(0.8),
       ),
     );
   }

@@ -19,9 +19,13 @@ class MyApp extends ConsumerWidget {
     return MaterialApp(
         title: 'Flutter Demo',
         theme: ThemeData(
+          dialogTheme: DialogTheme(
+              shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(10),
+          )),
           fontFamily: GoogleFonts.montserrat().fontFamily,
           colorScheme: ColorScheme.fromSeed(
-              background: Color.fromARGB(255, 241, 250, 255),
+              background: const Color.fromARGB(255, 241, 250, 255),
               seedColor: const Color.fromARGB(255, 0, 110, 176)),
           outlinedButtonTheme: OutlinedButtonThemeData(
               style: OutlinedButton.styleFrom(

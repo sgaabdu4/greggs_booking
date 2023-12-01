@@ -6,17 +6,27 @@ import 'package:greggs_booking/api_classes.dart';
 import 'package:greggs_booking/providers.dart';
 import 'package:greggs_booking/summary.dart';
 
-class PaymentButtonWidget extends StatelessWidget {
+class PaymentButtonWidget extends ConsumerWidget {
   const PaymentButtonWidget({
     super.key,
   });
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final aggregatedItems = ref.watch(aggregatedItemsProvider);
     return InkWell(
       onTap: () {
-        Navigator.of(context)
-            .push(MaterialPageRoute(builder: (context) => const SummaryPage()));
+        if (aggregatedItems.isNotEmpty) {
+          Navigator.of(context).push(
+              MaterialPageRoute(builder: (context) => const SummaryPage()));
+        } else {
+          showDialog<String>(
+              context: context,
+              builder: (BuildContext context) => const AlertDialog(
+                    title: Text('Add Basket'),
+                    content: Text('Please add something into the basket.'),
+                  ));
+        }
       },
       child: Container(
           height: 40,

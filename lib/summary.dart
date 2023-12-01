@@ -88,7 +88,10 @@ class _SummaryPageState extends ConsumerState<SummaryPage> {
                 const SizedBox(
                   height: 10,
                 ),
-                const PaymentButtonWidget(),
+                //TODO: for payment
+                CheckOutButtonWidget(
+                  nextpage: () {},
+                ),
               ],
             ),
           ),

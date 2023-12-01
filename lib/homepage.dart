@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'package:greggs_booking/api_classes.dart';
 import 'package:greggs_booking/providers.dart';
+import 'package:greggs_booking/summary.dart';
 import 'package:greggs_booking/utils.dart';
 
 class MyHomePage extends ConsumerStatefulWidget {
@@ -52,7 +53,12 @@ class _MyHomePageState extends ConsumerState<MyHomePage> {
               const SizedBox(height: 10),
               const BasketTotalWidget(),
               const SizedBox(height: 10),
-              const PaymentButtonWidget(),
+              CheckOutButtonWidget(
+                nextpage: () {
+                  Navigator.of(context).push(MaterialPageRoute(
+                      builder: (context) => const SummaryPage()));
+                },
+              ),
             ]
           ],
         ),

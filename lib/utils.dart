@@ -4,12 +4,13 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'package:greggs_booking/api_classes.dart';
 import 'package:greggs_booking/providers.dart';
-import 'package:greggs_booking/summary.dart';
 
-class PaymentButtonWidget extends ConsumerWidget {
-  const PaymentButtonWidget({
-    super.key,
+class CheckOutButtonWidget extends ConsumerWidget {
+  const CheckOutButtonWidget({super.key, 
+    required this.nextpage,
   });
+
+  final void Function() nextpage;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -17,8 +18,7 @@ class PaymentButtonWidget extends ConsumerWidget {
     return InkWell(
       onTap: () {
         if (finalBasketItems.isNotEmpty) {
-          Navigator.of(context).push(
-              MaterialPageRoute(builder: (context) => const SummaryPage()));
+          nextpage;
         } else {
           showDialog<String>(
               context: context,
